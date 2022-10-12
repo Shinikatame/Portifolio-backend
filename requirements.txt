@@ -1,4 +1,5 @@
 fastapi
 aiohttp
-dotenv
+python-dotenv
 uvicorn
+motor
