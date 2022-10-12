@@ -1,0 +1,8 @@
+query($name: String!) { 
+        repository(owner: "Shinikatame", name: $name){
+            name
+            description
+            url
+            homepageUrl
+    }
+}

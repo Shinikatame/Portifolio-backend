@@ -1,31 +1,24 @@
-from Modules.Resume import Resume
-from Modules.Json import jsonLoad
+from fastapi import FastAPI
+from uvicorn import run
 
-technologies = jsonLoad('Technologies.json')
-tools = jsonLoad('Tools.json')
-langs = jsonLoad('Languages.json')
+from importlib import import_module
+from os import listdir
 
-pdf = Resume(jsonLoad('Profile.json'))
-pdf.add_page(format = 'A4')
+app = FastAPI()
 
-pdf.about()
+def load(path = 'Routers'): 
+    for file in listdir(path):
+        if file not in ['__pycache__', '__init__.py']:
+            if file.endswith('.py'):
+                module = import_module(f'{path}.{file}'.replace('.py', ''))
+                app.include_router(module.router)
 
-pdf.topic('Linguagens e Frameworks')
+            else:
+                load(path + '/' + file)
 
-for technology in technologies:
-    pdf.subtopic(technology['name'])
-    
-    for lib in technology['libraries']:
-        pdf.subtopicItem(lib['name'])
+load()
 
-pdf.topic('Outros')
+print(__name__)
 
-for tool in tools:
-    pdf.topicItem(tool)
-
-pdf.topic('Idiomas')
-
-for lang in langs:
-    pdf.topicItem(lang)
-
-pdf.output('curriculo.pdf')
+if __name__ == '__main__': 
+    run(app)
