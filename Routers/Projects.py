@@ -11,15 +11,17 @@ router = APIRouter()
 @router.get('/projects')
 async def projects():
     sampleRepos = await findRepos()
-    reposData = []
+    reposTask = []
 
-    for repo in sampleRepos:
+    for repo in sampleRepos['repositories']:
         query = reader('GraphQL/Repo.txt')
         variables = {'name': repo}
 
         task = create_task(queryGH(query, variables))
-        reposData.append(task)
+        reposTask.append(task)
 
-    await gather(*reposData)
+    await gather(*reposTask)
 
-    return [repo.result()['repository'] for repo in reposData]
+    reposData = [repo.result()['repository'] for repo in reposTask]
+
+    return reposData

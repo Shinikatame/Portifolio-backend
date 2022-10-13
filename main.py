@@ -18,7 +18,5 @@ def load(path = 'Routers'):
 
 load()
 
-print(__name__)
-
 if __name__ == '__main__': 
     run(app)
