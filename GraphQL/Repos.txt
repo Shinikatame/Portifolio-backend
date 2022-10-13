@@ -1,0 +1,18 @@
+query($name: String!) { 
+        repository(owner: "Shinikatame", name: $name){
+            name
+            description
+            url
+            homepageUrl
+            
+            languages(first: 20){
+                nodes{
+                    name
+                }
+            }
+            
+            primaryLanguage {
+                name
+            }
+        }
+    }

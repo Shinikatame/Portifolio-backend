@@ -8,20 +8,29 @@ from Database.Repos import findRepos
 
 router = APIRouter()
 
+async def queryRepo(query: str, repoName: str):
+    variables = {'name': repoName}
+
+    repoRequest = await queryGH(query, variables)
+    repo = repoRequest['repository']
+
+    repo['languages'] = [lang['name'] for lang in repo['languages']['nodes']]
+    repo['primaryLanguage'] = repo['primaryLanguage']['name']
+
+    return repo
+
 @router.get('/projects')
 async def projects():
     sampleRepos = await findRepos()
+    queryGraphql = reader('GraphQL/Repos.txt')
     reposTask = []
 
-    for repo in sampleRepos['repositories']:
-        query = reader('GraphQL/Repo.txt')
-        variables = {'name': repo}
-
-        task = create_task(queryGH(query, variables))
+    for repoName in sampleRepos['repositories']:
+        task = create_task(queryRepo(queryGraphql, repoName))
         reposTask.append(task)
 
     await gather(*reposTask)
 
-    reposData = [repo.result()['repository'] for repo in reposTask]
+    reposData = [repo.result() for repo in reposTask]
 
     return reposData

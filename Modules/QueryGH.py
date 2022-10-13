@@ -4,7 +4,6 @@ from os import getenv
 
 load_dotenv('.env')
 
-
 async def queryGH(query: str, variables: dict = {}) -> dict:
     json = {
         'query': query,
@@ -20,4 +19,5 @@ async def queryGH(query: str, variables: dict = {}) -> dict:
     async with ClientSession() as session:
         async with session.post('https://api.github.com/graphql', json=json, headers=headers) as response:
             json = await response.json()
+
             return json['data']
