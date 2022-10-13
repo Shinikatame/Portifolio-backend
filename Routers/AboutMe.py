@@ -8,4 +8,4 @@ router = APIRouter()
 @router.get('/aboutme')
 async def aboutme():
     about = await queryGH(reader('GraphQL/User.txt'))
-    return about
+    return about['user']
